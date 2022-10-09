@@ -51,7 +51,61 @@ void func3(){
         cout << endl;
     } 
 }
+
+/**
+ * @brief
+ * 按照k为维度生成排列组合的数据集，比如两个2维数据集生成一个三维数据集
+ * 参数3：待生成的数据集的维数
+*/
+set<set<string> > set_insert(set<string> a, set<string> b, int k){
+    set< set<string> > ret;
+    set<string> temp = a;
+    for(auto it = b.begin(); it != b.end(); it++){
+        temp.insert(*it);
+        if(temp.size() == k){
+            ret.insert(temp);
+        }
+        temp = a;
+    };
+    return ret;
+}
+
+//根据频繁k-1项集生成候选k项集
+set<set<string> > genCk(set<set<string> > &Lk_sub_1, int k){
+    set< set<string> > ret;
+    for(auto it = Lk_sub_1.begin(); it != Lk_sub_1.end(); it++){
+        set<string> pre = *it;
+        for(auto it_r = ++it; it_r != Lk_sub_1.end(); it_r++){
+            set<set<string> > temp = set_insert(pre, *it_r, k);
+            // TO-DO
+        }
+    }
+}
+
+//测试一下set_insert这个函数
+void func4(){
+    
+}
 int main(){
     // func2();
-    func3();
+    //func3();
+    set<string> a;
+    set<string> b;
+    a.insert("a");
+    // a.insert("b");
+    b.insert("b");
+    // b.insert("c");
+    // set<string> c;
+    // c.insert("c");
+
+    set<set<string> > result = set_insert(a, b, 2);
+    for(auto it = result.begin(); it != result.end(); it++){
+        set<string> a = *it;
+        cout << "将两个二项集合并为一个三项集的结果为"<< endl;
+        for(auto it_a = a.begin(); it_a != a.end(); it_a++){
+            cout << *it_a ;
+        }
+        cout << endl;
+    }
+
 }
