@@ -76,28 +76,18 @@ set<set<string> > genCk(set<set<string> > &Lk_sub_1, int k){
     for(auto it = Lk_sub_1.begin(); it != Lk_sub_1.end(); it++){
         set<string> pre = *it;
         for(auto it_r = ++it; it_r != Lk_sub_1.end(); it_r++){
-            set<set<string> > temp = set_insert(pre, *it_r, k);
-            // TO-DO
+            ret = set_insert(pre, *it_r, k);
         }
     }
+    return ret;
 }
 
 //测试一下set_insert这个函数
 void func4(){
-    
-}
-int main(){
-    // func2();
-    //func3();
     set<string> a;
     set<string> b;
     a.insert("a");
-    // a.insert("b");
     b.insert("b");
-    // b.insert("c");
-    // set<string> c;
-    // c.insert("c");
-
     set<set<string> > result = set_insert(a, b, 2);
     for(auto it = result.begin(); it != result.end(); it++){
         set<string> a = *it;
@@ -107,5 +97,37 @@ int main(){
         }
         cout << endl;
     }
+}
 
+//测试genCk函数
+void func5(){
+    set<string> a, b, c;
+    a.insert("a");
+    a.insert("b");
+    b.insert("a");
+    b.insert("c");
+    c.insert("b");
+    c.insert("c");
+    
+    set< set<string> > bund;
+    bund.insert(a);
+    bund.insert(b);
+    bund.insert(c);
+    set< set<string> > ret;
+    ret = genCk(bund, 3);
+
+    for(auto it = ret.begin(); it != ret.end(); it++){
+        set<string> temp = *it;
+        cout << "测试genCk函数" << endl;
+        for(auto it_s = temp.begin(); it_s != temp.end(); it_s++){
+            cout << *it_s;
+        }
+        cout << endl;
+    }
+
+}
+int main(){
+    // func4();
+    func5();
+    return 0;
 }
