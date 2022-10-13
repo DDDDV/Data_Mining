@@ -70,15 +70,25 @@ set<set<string> > set_insert(set<string> a, set<string> b, int k){
     return ret;
 }
 
+void b_to_a(set<set<string> > &a, set<set<string> > b){
+    for(auto it_b = b.begin(); it_b != b.end(); it_b++){
+        a.insert(*it_b);
+    }
+
+}
+
 //根据频繁k-1项集生成候选k项集
 set<set<string> > genCk(set<set<string> > &Lk_sub_1, int k){
-    set< set<string> > ret;
-    for(auto it = Lk_sub_1.begin(); it != Lk_sub_1.end(); it++){
+    set<set<string> > ret, temp;
+    for(auto it = Lk_sub_1.begin(); it != Lk_sub_1.end(); it++){//此处已经生成了候选k项集合
         set<string> pre = *it;
         for(auto it_r = ++it; it_r != Lk_sub_1.end(); it_r++){
-            ret = set_insert(pre, *it_r, k);
+            temp = set_insert(pre, *it_r, k);
+            b_to_a(ret, temp);
         }
+        it--;
     }
+    //从候选k项集中找到频繁k项集
     return ret;
 }
 
@@ -101,18 +111,22 @@ void func4(){
 
 //测试genCk函数
 void func5(){
-    set<string> a, b, c;
+    set<string> a, b, c, d;
     a.insert("a");
     a.insert("b");
     b.insert("a");
     b.insert("c");
     c.insert("b");
     c.insert("c");
+    d.insert("e");
+    d.insert("f");
+
     
     set< set<string> > bund;
     bund.insert(a);
     bund.insert(b);
     bund.insert(c);
+    bund.insert(d);
     set< set<string> > ret;
     ret = genCk(bund, 3);
 
