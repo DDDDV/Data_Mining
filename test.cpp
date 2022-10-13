@@ -109,6 +109,16 @@ void func4(){
     }
 }
 
+void genCk(set<set<string> > Lk, int k){
+    set<set<string> > temp;
+    for(auto it = Lk.begin(); it != Lk.end(); it++){
+        auto flag = it;
+        for(int i = 0; i < k; i++){
+            
+        }
+    }
+}
+
 //测试genCk函数
 void func5(){
     set<string> a, b, c, d;
