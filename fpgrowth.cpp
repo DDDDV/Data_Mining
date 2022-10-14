@@ -36,8 +36,9 @@ public:
         this->minSup = minSup;
     };
     bool buildData();
-    void pre_process();
+    map<string, int> pre_process();
     int insert(set<string> &);
+    void rm_low(map<string, int> &);
 };
 
 int line_num;
@@ -67,9 +68,41 @@ bool FP_growth::buildData(){
     return EXIT_SUCCESS;
 }
 
-void FP_growth::pre_process(){
-    map<set<string>, int> result;
+map<string, int> FP_growth::pre_process(){//计算每一个字符串出现的次数，
+    map<string, int> result;
     for(auto it = Database.begin(); it != Database.end(); it++){
-        pair<map<set<string>, int>, int> ret = result.insert(make_pair(*it->second, 1));
+        for(auto it_second = it->second.begin(); it_second != it->second.end(); it_second++){
+            pair<map<string, int>::iterator, int> ret = result.insert(make_pair(*it_second, 1));
+            if(!ret.second){
+                ret.first->second++;
+            }
+        }
     }
+    //打印测试一下是否正确
+    for(auto it = result.begin(); it != result.end(); it++){
+        cout << "测试pre_process" << "串:" <<it->first << "量：" << it->second <<endl;
+    }//正确
+
+    return result;
+}
+
+//删除小于设定支持度的数据
+void FP_growth::rm_low(map<string, int> &src){
+    for(auto it = src.begin(); it != src.end(); it++){
+        if(it->second < minSup){
+            src.erase(it->first);
+        }
+    }
+    //测试删除之后的结果
+    for(auto it = src.begin(); it != src.end(); it++){
+        cout << "rm_low" << ":" <<it->first << ":" << it->second <<endl;
+    }
+}
+
+int main(){
+    string FileName = "file.txt";
+    FP_growth fp(FileName, 2);
+    fp.buildData();
+    map<string, int> ret = fp.pre_process();
+    fp.rm_low(ret);
 }
