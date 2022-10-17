@@ -56,7 +56,6 @@ bool Apriori::buildData() {
     string textline;
     vector<string> lines_of_text;
     getline(inFile,textline);//多读取一行文本，消除文件开头标号
-    
     while(getline(inFile,textline))
         lines_of_text.push_back(textline);  //产生数据库
     for(line_num=0; line_num != lines_of_text.size(); line_num++){
@@ -170,6 +169,8 @@ set<int> intersec(set<int> &a,set<int> &b){
 map< set<string>, int > Apriori::getLk(int k, set<set<string> > Lk0) {
     map< set<string>,int> Lk,Ck;
     set< set<string> > CkSet = aprioriGen(k-1, Lk0);    //Ck的set-string，再集合成set
+    //剪枝
+    
     for(set< set<string> >::iterator i=CkSet.begin(); i!=CkSet.end(); i++){ //每一个set<string>
         string head = *(*i).begin();
         set<int> temp = mp[head];
@@ -180,6 +181,9 @@ map< set<string>, int > Apriori::getLk(int k, set<set<string> > Lk0) {
         if(temp.size()>=minSup)
             Lk[*i]=(int)temp.size();
     }
+
+    
+
     return Lk;
 }
  
