@@ -16,6 +16,7 @@ private:
     map< string,set<int> > mp;   //string -- 所有行数
     void sub(set<string> &set1, set<string> &set2);
     set<string> add(set<string> &set1, set<string> &set2);
+    set<set<string> > notSup;
 public:
     Apriori(string FileName, float MinSup){
         this->FileName = FileName;
@@ -27,8 +28,8 @@ public:
     set< set<string> > keySet(map<set<string>,int> &Lk);
     set< set<string> > aprioriGen(int m, set< set<string> > &);
     map< set<string>, int > getLk(int k, set<set<string> >);
-
     int printsetSet(set< set<string> > &);
+    friend bool fun1(set<string> &a,set<string> &b);
 };
  
 int line_num;
@@ -130,11 +131,11 @@ set<string> Apriori::add(set<string> &set1, set<string> &set2) {
 }
 
 bool fun1(set<string> &a,set<string> &b){
-    set<string> t=a;
-    for(set<string>::iterator it=b.begin();it!=b.end();it++){
+    set<string> t = a;
+    for(set<string>::iterator it = b.begin();it != b.end();it++){
         t.erase(*it);
     }
-    if(t.size()==1)
+    if(t.size() == 1)
         return true;
     else
         return false;
@@ -147,7 +148,7 @@ set< set<string> > Apriori::aprioriGen(int m, set<set<string> > &Lk0) {
         set<string> Li = *it;
         for(set< set<string> >::iterator itr = ++it; itr != Lk0.end(); itr++){
             set<string> Lj = *itr;
-            if(fun1(Li,Lj)){
+            if(fun1(Li, Lj)){
                 set<string> Ci = add(Li,Lj);
                 if(Ci.size() == m+1)
                     if(!Lk0.count(Ci))
@@ -155,10 +156,26 @@ set< set<string> > Apriori::aprioriGen(int m, set<set<string> > &Lk0) {
             }
         }
     }
+    //产生了ck之后 应该进行剪枝工作
+    for(auto it = Ck.begin(); it != Ck.end(); ){
+        bool flag = false;
+        set<string> temp = *it;
+        for(auto itr = notSup.begin(); itr != notSup.end(); itr++){//这里可能可以倒序遍历？会更快？
+            set<string> t = *itr;
+            if(fun1(temp, t)){
+                it = Ck.erase(it);
+                flag = true;
+                break;//如果删除，跳出本次循环。跳出循环
+            }
+        }
+        if(flag != true){//迭代器删除标记，如果删除则无需+1，否则需要+1
+            it++;
+        }
+        
+    }
     cout<<"完成"<<endl;
     return Ck;
 }
- 
 set<int> intersec(set<int> &a,set<int> &b){
     set<int> t;
     set_intersection(a.begin(),a.end(), b.begin(),b.end(), inserter(t,t.begin()));
@@ -170,7 +187,7 @@ map< set<string>, int > Apriori::getLk(int k, set<set<string> > Lk0) {
     map< set<string>,int> Lk,Ck;
     set< set<string> > CkSet = aprioriGen(k-1, Lk0);    //Ck的set-string，再集合成set
     //剪枝
-    
+
     for(set< set<string> >::iterator i=CkSet.begin(); i!=CkSet.end(); i++){ //每一个set<string>
         string head = *(*i).begin();
         set<int> temp = mp[head];
@@ -179,11 +196,10 @@ map< set<string>, int > Apriori::getLk(int k, set<set<string> > Lk0) {
             temp=intersec(temp,t);//求两个集合的交集
         }
         if(temp.size()>=minSup)
-            Lk[*i]=(int)temp.size();
+            Lk[*i]=(int)temp.size();//已经是频繁项集了
+        else
+            notSup.insert(*i);//不频繁的项集存入到notSup中 以便生成Ck时进行剪枝
     }
-
-    
-
     return Lk;
 }
  
@@ -193,7 +209,6 @@ int main() {
     // cin>>min_sup;
     min_sup = 2;
     Apriori apriori("file.txt", min_sup);
-    
     apriori.buildData();
     map<set<string>,int> L1 = apriori.getL1();
     set<set<string> > Set = apriori.keySet(L1); //频繁1项集的所有串，做成set
