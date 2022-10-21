@@ -6,6 +6,7 @@
 #include <map>
 #include <set>
 #include <algorithm>
+#include <windows.h>
 using namespace std;
 
 class Apriori{
@@ -204,10 +205,12 @@ map< set<string>, int > Apriori::getLk(int k, set<set<string> > Lk0) {
 }
  
 int main() {
+    DWORD time_start, time_end;
+    time_start = GetTickCount();
     float min_sup;
     // cout<<"请输入最小支持数/度：";
     // cin>>min_sup;
-    min_sup = 2;
+    min_sup = 1000;
     Apriori apriori("file.txt", min_sup);
     apriori.buildData();
     map<set<string>,int> L1 = apriori.getL1();
@@ -245,7 +248,9 @@ int main() {
         fcout<<"n="<<n<<endl;
         cnt += n;
     }
+    time_end = GetTickCount();
     cout<<"总数="<<cnt<<endl;
     fcout<<"总数="<<cnt<<endl;
+    fcout<<"consume time = " << (time_end - time_start) << endl;
     return 0;
 }
